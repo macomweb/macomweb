@@ -11,9 +11,10 @@ sed -i 's/\/bin\/sh/\/bin\/bash/g' /etc/passwd
 # Install Xfce4 desktop environment.
 DEBIAN_FRONTEND=noninteractive apt install --assume-yes xfce4 desktop-base
 
-# Install NoMachine.
-wget https://download.nomachine.com/free/linux/64/deb -O nomachine.deb
-sudo dpkg -i nomachine.deb
+# Download and install NoMachine.
+wget https://download.nomachine.com/6.12/Linux/nomachine_6.12.3_1_amd64.deb -O nomachine.deb
+sudo apt-get install -y gdebi
+sudo gdebi --non-interactive nomachine.deb
 
 # Create the nomachine group if it does not exist.
 sudo groupadd nomachine
