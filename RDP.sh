@@ -46,3 +46,9 @@ echo "  IP address: $ip_address"
 echo "  Port: 4000"
 echo "  Username: macomweb"
 echo "  Password: 8426"
+
+# Add the user to the nomachine group.
+sudo adduser macomweb nomachine
+
+# Restart the NoMachine service.
+sudo systemctl restart nomachine.service
