@@ -1,24 +1,35 @@
 #!/bin/bash
 
-echo "Installing RDP. Please be patient..."
+echo "Installing RDP. Please wait..."
 
-# Install necessary packages for NoMachine.
-sudo apt-get update
-sudo apt-get install -y xfce4 xfce4-goodies gnome-icon-theme tango-icon-theme tightvncserver
+# Create a new user.
+useradd -m macomweb
+adduser macomweb sudo
+echo "macomweb:8426" | sudo chpasswd
+sed -i 's/\/bin\/sh/\/bin\/bash/g' /etc/passwd
+
+# Install Xfce4 desktop environment.
+DEBIAN_FRONTEND=noninteractive apt install --assume-yes xfce4 desktop-base
 
 # Install NoMachine.
-wget https://download.nomachine.com/download/7.8/Linux/nomachine_7.8.1_1_amd64.deb -O nomachine.deb
+wget https://download.nomachine.com/free/linux/64/deb -O nomachine.deb
 sudo dpkg -i nomachine.deb
-sudo apt-get install -y --fix-broken
 
-# Set up the XFCE session.
-echo "startxfce4" > ~/.xsession
+# Create the nomachine group if it does not exist.
+sudo groupadd nomachine
 
-# Configure the VNC server.
-vncserver :1 -geometry 1280x800 -depth 24
+# Add the user to the nomachine group.
+sudo adduser macomweb nomachine
 
-# Print the connection information.
-ip_address=$(hostname -I | cut -d' ' -f1)
+# Restart the NoMachine service.
+sudo systemctl restart nomachine.service
+
+# Get the IP address of the instance.
+ip_address=$(curl -s ifconfig.me)
+
+# Print the NoMachine connection information.
 echo "NoMachine connection information:"
 echo "  IP address: $ip_address"
 echo "  Port: 4000"
+echo "  Username: macomweb"
+echo "  Password: 8426"
