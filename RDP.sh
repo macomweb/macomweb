@@ -17,11 +17,6 @@ echo "startxfce4" > ~/.xsession
 # Configure the VNC server.
 vncserver :1 -geometry 1280x800 -depth 24
 
-# Prompt the user to use Google/Headless method for Debian.
-printf '\nCheck https://remotedesktop.google.com/headless  Copy Command Of Debian Linux And Paste Down\n'
-read -p "Paste Here: " CRP
-su - $USER -c """$CRP"""
-
 # Print the connection information.
 ip_address=$(hostname -I | cut -d' ' -f1)
 echo "NoMachine connection information:"
