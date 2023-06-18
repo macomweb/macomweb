@@ -2,6 +2,7 @@
 
 # Create a new Compute Engine instance.
 gcloud compute instances create rdp-instance --machine-type n1-standard-1
+gcloud config set project rdp
 
 # Install the xrdp package.
 sudo apt-get update
