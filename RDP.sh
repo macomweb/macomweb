@@ -13,7 +13,7 @@ sed -i 's/\/bin\/sh/\/bin\/bash/g' /etc/passwd
 # Install Chrome Remote Desktop.
 apt-get update
 wget https://dl.google.com/linux/direct/chrome-remote-desktop_current_amd64.deb
-sudo dpkg --install chrome-remote-desktop_current_amd64.deb
+sudo dpkg -i chrome-remote-desktop_current_amd64.deb
 apt install --assume-yes --fix-broken
 
 # Install Xfce4 desktop environment.
@@ -26,16 +26,24 @@ systemctl disable lightdm.service
 
 # Install Google Chrome.
 wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
-sudo dpkg --install google-chrome-stable_current_amd64.deb
+sudo dpkg -i google-chrome-stable_current_amd64.deb
 apt install --assume-yes --fix-broken
 
 # Install Nautilus and nano.
 apt install nautilus nano -y
 
 # Install NoMachine server.
-wget https://download.nomachine.com/free/latest/linux/nomachine_current_amd64.deb
-sudo dpkg --install nomachine_current_amd64.deb
-systemctl start nomachine.service
+wget https://download.nomachine.com/free/linux/64/deb -O nomachine.deb
+sudo dpkg -i nomachine.deb
+
+# Create the nomachine group if it does not exist.
+sudo groupadd nomachine
+
+# Add the user to the nomachine group.
+sudo adduser macomweb nomachine
+
+# Restart the NoMachine service.
+sudo systemctl restart nomachine.service
 
 # Get the IP address of the instance.
 ip_address=$(curl -s ifconfig.me)
@@ -46,9 +54,3 @@ echo "  IP address: $ip_address"
 echo "  Port: 4000"
 echo "  Username: macomweb"
 echo "  Password: 8426"
-
-# Add the user to the nomachine group.
-sudo adduser macomweb nomachine
-
-# Restart the NoMachine service.
-sudo systemctl restart nomachine.service
