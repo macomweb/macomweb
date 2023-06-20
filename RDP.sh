@@ -35,7 +35,62 @@ read -p "choose ngrok region: " CRP
 ./ngrok tcp --region $CRP 4000 &>/dev/null &
 sleep 1
 if curl --silent --show-error http://127.0.0.1:4040/api/tunnels  > /dev/null 2>&1; then echo OK; else echo "Ngrok Error! Please try again!" && sleep 1 && goto ngrok; fi
-docker run --rm -d --network host --privileged --name nomachine-xfce4 -e PASSWORD=123456 -e USER=reality --cap-add=SYS_PTRACE --shm-size=1g thuonghai2711/nomachine-ubuntu-desktop:windows10
+
+
+# Define common parts of the Docker command
+docker_common_command="docker run --rm -d --network host --privileged --cap-add=SYS_PTRACE --shm-size=1g"
+password="123456"
+user="reality"
+
+# Print menu
+echo "Please choose a Linux environment:"
+echo "1. NoMachine Mate (Ubuntu with Mate desktop)"
+echo "2. NoMachine XFCE4 (Ubuntu with XFCE4 desktop)"
+echo "3. NoMachine XFCE4 with Wine (Ubuntu with XFCE4 desktop and Wine)"
+echo "4. NoMachine XFCE4 (Ubuntu with Windows 10 theme)"
+echo "5. NoMachine XFCE4 (Kali Linux)"
+echo "6. Exit"
+
+# Read user's choice
+read -p "Enter your choice: " choice
+
+# Run Docker command based on the user's choice
+case $choice in
+  1)
+    machineName="nomachine-mate"
+    dockerImagePath="thuonghai2711/nomachine-ubuntu-desktop:mate"
+    ;;
+  2)
+    machineName="nomachine-xfce4"
+    dockerImagePath="thuonghai2711/nomachine-ubuntu-desktop:xfce4"
+    ;;
+  3)
+    machineName="nomachine-xfce4"
+    dockerImagePath="thuonghai2711/nomachine-ubuntu-desktop:wine"
+    ;;
+  4)
+    machineName="nomachine-xfce4"
+    dockerImagePath="thuonghai2711/nomachine-ubuntu-desktop:windows10"
+    ;;
+  5)
+    machineName="nomachine-xfce4-kali"
+    dockerImagePath="thuonghai2711/nomachine-kali-desktop:latest"
+    ;;
+  6)
+    echo "Exiting..."
+    exit 0
+    ;;
+  *)
+    echo "Invalid choice. Exiting..."
+    exit 1
+    ;;
+esac
+
+# Construct and run the Docker command
+docker_command="$docker_common_command --name $machineName -e PASSWORD=$password -e USER=$user $dockerImagePath"
+echo "Running Docker command: $docker_command"
+$docker_command
+
 clear
 echo "NoMachine: https://www.nomachine.com/download"
 echo Done! NoMachine Information:
